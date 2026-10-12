@@ -21,7 +21,7 @@ This lab accompanies the Week 4 notes, [*Data Wrangling I - Loading, Cleaning an
 
 - [ ] The directory `data/part1/` contains three data files. Load them into `R` using `tidyverse`. (Hint: the three files are not all formatted in the same way.)
 - [ ] By default, each `read_*` function prints a message describing the columns it has read. Make sure these messages are hidden.
-- [ ] For each of the files, display the first few rows of the file.
+- [x] For each of the files, display the first few rows of the file.
 
 ::: solution
 ```{r}
@@ -121,14 +121,25 @@ Each row is a diamond, and each column contains information about that diamond s
 For the next few tasks you should use `dplyr` functions, using pipe syntax.
 Try to format your code nicely so it is readable.
 
-- [ ] Add a new column to the `tibble` called `volume` that contains the volume of the diamond ($x \times y \times z$).
+- [x] Add a new column to the `tibble` called `volume` that contains the volume of the diamond ($x \times y \times z$).
 
 ::: solution
+```{r}
+diamonds = diamonds |>
+  mutate(volume = x * y * z)
+
+diamonds |> head(2)
+```
 :::
 
 - [ ] Create a `tibble` containing only the numeric columns of `diamonds`. (Hint: look at the tidyselect callout in the notes.)
 
 ::: solution
+```{r}
+diamonds = diamonds |>
+  select(where(is.numeric))
+diamonds |> head()
+```
 :::
 
 Now answer the following research questions.
@@ -142,6 +153,10 @@ Now answer the following research questions.
 - [ ] Create a `tibble` containing diamonds that are "unusually" large (having volume more than three standard deviations from the mean volume)?
 
 ::: solution
+```{r}
+diamonds |>
+  summarise(mean_price = mean(price))
+```
 :::
 
 Before trusting these results, it is worth checking whether they make sense.
