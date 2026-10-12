@@ -184,12 +184,21 @@ However, not all students take all assessments, and assessments the student has 
 - [ ] Load the file and look at it. Recall the three rules of tidy data from the notes. Is this table tidy? If not, which rule(s) does it break?
 
 ::: solution
+```{r}
+assessments <- read.csv("data/part3/assessment.csv")
+assessments |> head()
+```
+Each test here should be its own row, so that each observation is a row.
 :::
 
 - [ ] Tidy the table: pivot into long format with one row per student and assessment, and drop missing scores.
 - [ ] Compute each student's overall average, and the number of assessments they took. (Hint: look at the "Other Summarise Functions" tip in the notes.)
 
 ::: solution
+```{r}
+assessments = assessments |>
+  
+```
 :::
 
 - [ ] Redo the pivot, this time using `starts_with` to choose the columns to pivot. Check you get the same result. Suppose a new column `student_name` were added to the file: which of the two approaches would still work, and why?
