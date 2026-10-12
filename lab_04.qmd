@@ -3,6 +3,9 @@ title: Lab 4
 format:
     html:
         css: styles.css
+editor: 
+  markdown: 
+    wrap: sentence
 ---
 
 ## Objectives {.unnumbered}
@@ -20,8 +23,19 @@ This lab accompanies the Week 4 notes, [*Data Wrangling I - Loading, Cleaning an
 - [ ] By default, each `read_*` function prints a message describing the columns it has read. Make sure these messages are hidden.
 - [ ] For each of the files, display the first few rows of the file.
 
-::: {.solution}
+::: solution
+```{r}
+#| message: false
+data1 <- read_csv("data/part1/data1.csv")
 
+data2 <- read_delim("data/part1/data2.txt", delim='\t')
+# Alternative way
+data2 <- read_tsv("data/part1/data2.txt")
+
+data3 <- read_delim("data/part1/data3", delim=';')
+
+
+```
 :::
 
 ### Task 1b: Checking Loaded Data
@@ -36,8 +50,20 @@ The file `data3` contains information about books in a bookshop.
 - [ ] Reload the file so that `ISBN` is stored as text. (Hint: look up the `col_types` argument of `read_delim`, and the `cols` and `col_character` functions.)
 - [ ] `readr` also has a function called `read_csv2`, which reads files that use `;` as a delimiter. Try loading `data3` with `read_csv2` instead. Compare the `PriceUSD` and `AvgRating` columns to the raw file. What has gone wrong?
 
-::: {.solution}
+::: solution
+```{r}
+data3 |> head()
+```
 
+The 'ISBN' column is being stored as a number, which is not a sensible way to store it since 'ISBN' is an identifier.
+We will not be performing arithmetic to it.
+
+```{r}
+data3 <- read_delim("data/part1/data3", delim=';', col_types = cols(
+  ISBN = col_character()
+))
+data3 |> head()
+```
 :::
 
 The file `data1.csv` contains student scores from two tests, with their average.
@@ -46,29 +72,25 @@ The file `data1.csv` contains student scores from two tests, with their average.
 - [ ] Compute the mean of `score1`. Why do you get `NA`, and how can you fix this? (Hint: look at how `na.rm` was used in the notes.)
 - [ ] Look at the row for Henry Zhao. Are his scores really `0`? What happens to the mean of `score1` and of `average` if he is excluded?
 
-::: {.solution}
-
+::: solution
 :::
 
 The file `data2.txt` contains readings from air quality monitoring stations.
 
 - [ ] Create a `tibble` containing only `station_id` and the particulate matter readings (the columns measured in µg/m³). Use a tidyselect helper rather than typing out the column names.
 
-::: {.solution}
-
+::: solution
 :::
 
 - [ ] How many readings are there in the file, and from how many different neighbourhoods? (Hint: look at the "Other Summarise Functions" tip in the notes.)
 
-::: {.solution}
-
+::: solution
 :::
 
 - [ ] Which readings have a `status` other than `OK`? What do you notice about their pollution readings and `sensor_uptime_pct`?
 - [ ] Compute the mean `pm2_5_ug_m3` over all readings, and over only the readings with status `OK`. Which would you report, and why?
 
-::: {.solution}
-
+::: solution
 :::
 
 ### Task 2: `dplyr`
@@ -99,18 +121,14 @@ Each row is a diamond, and each column contains information about that diamond s
 For the next few tasks you should use `dplyr` functions, using pipe syntax.
 Try to format your code nicely so it is readable.
 
-
 - [ ] Add a new column to the `tibble` called `volume` that contains the volume of the diamond ($x \times y \times z$).
 
-
-::: {.solution}
-
+::: solution
 :::
 
 - [ ] Create a `tibble` containing only the numeric columns of `diamonds`. (Hint: look at the tidyselect callout in the notes.)
 
-::: {.solution}
-
+::: solution
 :::
 
 Now answer the following research questions.
@@ -123,27 +141,24 @@ Now answer the following research questions.
 - [ ] What are the most common combinations of cut and colour? (Hint: look up the `count` function)
 - [ ] Create a `tibble` containing diamonds that are "unusually" large (having volume more than three standard deviations from the mean volume)?
 
-::: {.solution}
-
+::: solution
 :::
 
-Before trusting these results, it is worth checking whether they make sense. Since all diamonds have the same density, heavier diamonds are larger, so `carat` and `volume` should be closely related.
+Before trusting these results, it is worth checking whether they make sense.
+Since all diamonds have the same density, heavier diamonds are larger, so `carat` and `volume` should be closely related.
 
 - [ ] Look at the largest few diamonds in your answer. Given their `carat`, are their volumes plausible?
 - [ ] Add a new column called `volume_per_carat` containing the ratio of `volume` to `carat`. Look at the diamonds with the smallest and largest values of this ratio. Does this suggest there any errors in the dataset?
 - [ ] Create a new `tibble` called `diamonds_clean` that keeps only diamonds with `volume_per_carat` between 100 and 250. How many diamonds did you remove?
 - [ ] Repeat the "unusually large" question using `diamonds_clean`. How many diamonds do you find now, and why has the number changed?
 
-::: {.solution}
-
+::: solution
 :::
 
 - [ ] **Extension:** Find the most expensive diamond of each cut.
 
-::: {.solution}
-
+::: solution
 :::
-
 
 ### Task 3: `tidyr`
 
@@ -153,42 +168,35 @@ However, not all students take all assessments, and assessments the student has 
 
 - [ ] Load the file and look at it. Recall the three rules of tidy data from the notes. Is this table tidy? If not, which rule(s) does it break?
 
-::: {.solution}
-
+::: solution
 :::
 
 - [ ] Tidy the table: pivot into long format with one row per student and assessment, and drop missing scores.
 - [ ] Compute each student's overall average, and the number of assessments they took. (Hint: look at the "Other Summarise Functions" tip in the notes.)
 
-::: {.solution}
-
+::: solution
 :::
 
 - [ ] Redo the pivot, this time using `starts_with` to choose the columns to pivot. Check you get the same result. Suppose a new column `student_name` were added to the file: which of the two approaches would still work, and why?
 
-::: {.solution}
-
+::: solution
 :::
 
 One of the key principles of tidy data is that each cell should contain only one value.
-Notice that in the new dataset, the column `assessment` contains *two* values: the Semester and the Assessment ID,
-separated by an `_`.
+Notice that in the new dataset, the column `assessment` contains *two* values: the Semester and the Assessment ID, separated by an `_`.
 
 - [ ] Use `separate_wider_delim` to split `assessment` into two columns, one with the assessment ID and one with the Semester.
 - [ ] Create a wide table with one row per student, and two new columns containing the average score in Semester 1 and Semester 2.
 
-::: {.solution}
-
+::: solution
 :::
 
 - [ ] Add a column `improvement` to the wide table showing how much each student's average score changed from Semester 1 to Semester 2. Which students improved the most, and which declined the most?
 
-::: {.solution}
-
+::: solution
 :::
 
 - [ ] **Extension:** We tidied this dataset in two steps: `pivot_longer` followed by `separate_wider_delim`. Can you do both in a single call to `pivot_longer`? (Hint: look at the `names_sep` argument in `?pivot_longer`.)
 
-::: {.solution}
-
+::: solution
 :::
